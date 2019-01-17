@@ -1,5 +1,6 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 
 
 namespace Buzz {
@@ -63,11 +64,20 @@ namespace Buzz {
         public virtual void Update(GameTime time) { 
             if (!player) return;
 
-            position.X = (float)BuzzWorld.Graphics.PreferredBackBufferWidth / 2; 
-            position.Y = (float)BuzzWorld.Graphics.PreferredBackBufferHeight / 2;
+            KeyboardState kb = Keyboard.GetState();
+            if (kb.IsKeyDown(Keys.Right) 
+                || kb.IsKeyDown(Keys.Left) 
+                || kb.IsKeyDown(Keys.Space) 
+                || (kb.IsKeyDown(Keys.Up) && kb.IsKeyDown(Keys.Down)))
+                Charge = ParticleType.Neutral;
+            else if (kb.IsKeyDown(Keys.Up))
+                Charge = ParticleType.Positive;
+            else if (kb.IsKeyDown(Keys.Down))
+                Charge = ParticleType.Negative;
         }
 
         public virtual void Draw(GameTime time, SpriteBatch spriteBatch) {
+            // TODO: convert this to using with IDisposable hack?
             spriteBatch.Begin();
             spriteBatch.Draw(sprite.Texture, Position - sprite.OriginOffset, Color.White);
             spriteBatch.End();

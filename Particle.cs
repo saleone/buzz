@@ -41,10 +41,8 @@ namespace Buzz {
 
         private Sprite sprite; 
         private bool player = false;
-
-        public float Scale { get; set; }
-
-        public Particle(ParticleType charge, Vector2 pos, Vector2? root = null, float scale = 0.25f)
+        
+        public Particle(ParticleType charge, Vector2 pos, Vector2? root = null)
         {
             if (root == null) {
                 root = BuzzWorld.Center;
@@ -60,7 +58,6 @@ namespace Buzz {
 
             Position = pos;
             Charge = charge;
-            Scale = scale;
         }
 
         public virtual void Update(GameTime time) { 
@@ -71,8 +68,8 @@ namespace Buzz {
         }
 
         public virtual void Draw(GameTime time, SpriteBatch spriteBatch) {
-            spriteBatch.Begin(transformMatrix: Matrix.CreateScale(Scale));
-            spriteBatch.Draw(sprite.Texture, Position - sprite.OriginOffset * Scale, Color.White);
+            spriteBatch.Begin();
+            spriteBatch.Draw(sprite.Texture, Position - sprite.OriginOffset, Color.White);
             spriteBatch.End();
         }
 

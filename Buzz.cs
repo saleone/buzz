@@ -17,8 +17,8 @@ namespace Buzz
         public BuzzWorld()
         {
             Graphics = new GraphicsDeviceManager(this);
-            Graphics.PreferredBackBufferHeight = 1280;
-            Graphics.PreferredBackBufferWidth = 720;
+            Graphics.PreferredBackBufferWidth = 1280;
+            Graphics.PreferredBackBufferHeight = 720;
             Graphics.ApplyChanges();
 
             Window.AllowUserResizing = false;

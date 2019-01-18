@@ -7,10 +7,14 @@ namespace Buzz
 {
     public class BuzzWorld : Game
     {
-        public static GraphicsDeviceManager Graphics;
+        public static GraphicsDeviceManager Graphics { get; private set; }
+
+        public static readonly int WindowWidth = 700;
+        public static readonly int WindowHeight = 700;
+
         SpriteBatch spriteBatch;
 
-        public static Vector2 Center;
+        public static Vector2 Center { get; private set;}
 
         public Particle playerParticle;
 
@@ -50,6 +54,10 @@ namespace Buzz
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
             playerParticle.Update(gameTime);
+
+            if (ParticleSpawner.LiveParticles.Count < 10)
+                ParticleSpawner.CreateParticle();
+
             base.Update(gameTime);
         }
 
@@ -57,6 +65,12 @@ namespace Buzz
         {
             GraphicsDevice.Clear(Color.White);
             playerParticle.Draw(gameTime, spriteBatch);
+
+            spriteBatch.Begin();
+            foreach (Particle p in ParticleSpawner.LiveParticles)
+                p.Draw(gameTime, spriteBatch, useBatch: false);
+            spriteBatch.End();
+
             base.Draw(gameTime);
         }
     }

@@ -11,9 +11,8 @@ namespace Buzz {
         public ParticleType Charge { 
             get => charge;
             set {
-                if (!player) return;
-                charge = value; 
 
+                charge = value; 
                 switch (value) {
                     case ParticleType.Positive:
                         sprite = StaticSprites.ParticlePositive;
@@ -50,17 +49,11 @@ namespace Buzz {
         
         public Particle(ParticleType charge, Vector2 pos, Vector2? root = null)
         {
-            if (root == null) {
-                root = BuzzWorld.Center;
-            }
+            root = root ?? BuzzWorld.Center;
 
             // player is not allowed to move 
             player = root == pos;
-            if (player) 
-            {
-                position = pos;
-                this.charge = charge;
-            }
+            if (player) position = pos;
 
             Position = pos;
             Charge = charge;
@@ -75,11 +68,11 @@ namespace Buzz {
             }
         }
 
-        public virtual void Draw(GameTime time, SpriteBatch spriteBatch) {
+        public virtual void Draw(GameTime time, SpriteBatch spriteBatch, bool useBatch = true) {
             // TODO: convert this to using with IDisposable hack?
-            spriteBatch.Begin();
+            if (useBatch) spriteBatch.Begin();
             spriteBatch.Draw(sprite.Texture, Position - sprite.OriginOffset, Color.White);
-            spriteBatch.End();
+            if (useBatch) spriteBatch.End();
         }
 
     }

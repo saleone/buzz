@@ -8,6 +8,7 @@ namespace Buzz {
 
    public class Particle {
         public const float Mass = 0.1f;
+        public float Magnitude {get; private set;}
         public Vector2 Speed {get; set;} = Vector2.Zero;
         public Vector2 Acceleration {get; set;} = Vector2.Zero;
         protected Charge charge = Charge.Neutral;
@@ -49,13 +50,14 @@ namespace Buzz {
         public uint ChargeFlipFreq { get; private set; } = 100;
         private uint msFromChargeFlip = 0;
         
-        public Particle(Charge charge, Vector2 pos)
+        public Particle(Charge charge, Vector2 pos, float magnitude = 1)
         {
             player = BuzzWorld.Center == pos;
             if (player) position = pos;
 
             Position = pos;
             Charge = charge;
+            Magnitude = magnitude;
         }
 
         public virtual void Update(GameTime time) { 

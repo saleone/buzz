@@ -46,7 +46,7 @@ namespace Buzz
             StaticSprites.ParticlePositive = new Sprite(Content.Load<Texture2D>("particle-positive"));
             StaticSprites.ParticleNegative = new Sprite(Content.Load<Texture2D>("particle-negative"));
             
-            PlayerParticle = new Particle(Charge.Positive, Center);
+            PlayerParticle = new Particle(Charge.Positive, Center, 100);
         }
 
         protected override void Update(GameTime gameTime)
@@ -56,7 +56,7 @@ namespace Buzz
                 Exit();
             PlayerParticle.Update(gameTime);
 
-            if (ParticleSpawner.LiveParticles.Count < 10)
+            if (ParticleSpawner.LiveParticles.Count < 30)
                 ParticleSpawner.CreateParticle();
 
             foreach (Particle p in ParticleSpawner.LiveParticles)

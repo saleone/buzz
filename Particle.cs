@@ -7,6 +7,9 @@ namespace Buzz {
     public enum ParticleType { Neutral, Positive, Negative }
 
    public class Particle {
+        public const uint Mass = 1;
+        public Vector2 Speed {get; set;} = Vector2.Zero;
+        public Vector2 Acceleration {get; set;} = Vector2.Zero;
         protected ParticleType charge = ParticleType.Neutral;
         public ParticleType Charge { 
             get => charge;
@@ -24,7 +27,6 @@ namespace Buzz {
                         sprite = StaticSprites.ParticleNeutral;
                         break;
                 }
-
                 msFromChargeFlip = 0;
             }
         }
@@ -47,12 +49,9 @@ namespace Buzz {
         public uint ChargeFlipFreq { get; private set; } = 100;
         private uint msFromChargeFlip = 0;
         
-        public Particle(ParticleType charge, Vector2 pos, Vector2? root = null)
+        public Particle(ParticleType charge, Vector2 pos)
         {
-            root = root ?? BuzzWorld.Center;
-
-            // player is not allowed to move 
-            player = root == pos;
+            player = BuzzWorld.Center == pos;
             if (player) position = pos;
 
             Position = pos;
@@ -60,12 +59,19 @@ namespace Buzz {
         }
 
         public virtual void Update(GameTime time) { 
-            if (!player) return;
             
-            msFromChargeFlip += (uint)time.ElapsedGameTime.Milliseconds;
-            if (Keyboard.GetState().IsKeyDown(Keys.Space) && msFromChargeFlip >= ChargeFlipFreq) {
-                Charge = (Charge == ParticleType.Positive)  ? ParticleType.Negative : ParticleType.Positive;
+            if (player) {
+                msFromChargeFlip += (uint)time.ElapsedGameTime.Milliseconds;
+                if (Keyboard.GetState().IsKeyDown(Keys.Space) && msFromChargeFlip >= ChargeFlipFreq) {
+                    Charge = (Charge == ParticleType.Positive)  ? ParticleType.Negative : ParticleType.Positive;
+                }
+                return;
             }
+
+            float elapsedSeconds = (float)time.ElapsedGameTime.TotalSeconds;
+            Position += Speed * elapsedSeconds;
+            Speed += Acceleration * elapsedSeconds;
+            Acceleration = Algorithm.CoulombsLaw(BuzzWorld.Center - Position);
         }
 
         public virtual void Draw(GameTime time, SpriteBatch spriteBatch, bool useBatch = true) {

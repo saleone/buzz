@@ -16,7 +16,7 @@ namespace Buzz
 
         public static Vector2 Center { get; private set;}
 
-        public Particle playerParticle;
+        public Particle PlayerParticle;
 
         public BuzzWorld()
         {
@@ -46,17 +46,20 @@ namespace Buzz
             StaticSprites.ParticlePositive = new Sprite(Content.Load<Texture2D>("particle-positive"));
             StaticSprites.ParticleNegative = new Sprite(Content.Load<Texture2D>("particle-negative"));
             
-            playerParticle = new Particle(ParticleType.Neutral, Center);
+            PlayerParticle = new Particle(ParticleType.Neutral, Center);
         }
 
         protected override void Update(GameTime gameTime)
         {
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
-            playerParticle.Update(gameTime);
+            PlayerParticle.Update(gameTime);
 
             if (ParticleSpawner.LiveParticles.Count < 10)
                 ParticleSpawner.CreateParticle();
+
+            foreach (Particle p in ParticleSpawner.LiveParticles)
+                p.Update(gameTime);
 
             base.Update(gameTime);
         }
@@ -64,7 +67,7 @@ namespace Buzz
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.White);
-            playerParticle.Draw(gameTime, spriteBatch);
+            PlayerParticle.Draw(gameTime, spriteBatch);
 
             spriteBatch.Begin();
             foreach (Particle p in ParticleSpawner.LiveParticles)

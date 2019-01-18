@@ -25,6 +25,8 @@ namespace Buzz {
                         sprite = StaticSprites.ParticleNeutral;
                         break;
                 }
+
+                msFromChargeFlip = 0;
             }
         }
 
@@ -42,6 +44,9 @@ namespace Buzz {
 
         private Sprite sprite; 
         private bool player = false;
+
+        public uint ChargeFlipFreq { get; private set; } = 100;
+        private uint msFromChargeFlip = 0;
         
         public Particle(ParticleType charge, Vector2 pos, Vector2? root = null)
         {
@@ -63,17 +68,11 @@ namespace Buzz {
 
         public virtual void Update(GameTime time) { 
             if (!player) return;
-
-            KeyboardState kb = Keyboard.GetState();
-            if (kb.IsKeyDown(Keys.Right) 
-                || kb.IsKeyDown(Keys.Left) 
-                || kb.IsKeyDown(Keys.Space) 
-                || (kb.IsKeyDown(Keys.Up) && kb.IsKeyDown(Keys.Down)))
-                Charge = ParticleType.Neutral;
-            else if (kb.IsKeyDown(Keys.Up))
-                Charge = ParticleType.Positive;
-            else if (kb.IsKeyDown(Keys.Down))
-                Charge = ParticleType.Negative;
+            
+            msFromChargeFlip += (uint)time.ElapsedGameTime.Milliseconds;
+            if (Keyboard.GetState().IsKeyDown(Keys.Space) && msFromChargeFlip >= ChargeFlipFreq) {
+                Charge = (Charge == ParticleType.Positive)  ? ParticleType.Negative : ParticleType.Positive;
+            }
         }
 
         public virtual void Draw(GameTime time, SpriteBatch spriteBatch) {

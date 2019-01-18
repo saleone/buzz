@@ -4,23 +4,23 @@ using Microsoft.Xna.Framework.Input;
 
 
 namespace Buzz {
-    public enum ParticleType { Neutral, Positive, Negative }
+    public enum Charge { Neutral, Positive, Negative }
 
    public class Particle {
-        public const uint Mass = 1;
+        public const float Mass = 0.1f;
         public Vector2 Speed {get; set;} = Vector2.Zero;
         public Vector2 Acceleration {get; set;} = Vector2.Zero;
-        protected ParticleType charge = ParticleType.Neutral;
-        public ParticleType Charge { 
+        protected Charge charge = Charge.Neutral;
+        public Charge Charge { 
             get => charge;
             set {
 
                 charge = value; 
                 switch (value) {
-                    case ParticleType.Positive:
+                    case Charge.Positive:
                         sprite = StaticSprites.ParticlePositive;
                         break;
-                    case ParticleType.Negative:
+                    case Charge.Negative:
                         sprite = StaticSprites.ParticleNegative;
                         break;
                     default:
@@ -49,7 +49,7 @@ namespace Buzz {
         public uint ChargeFlipFreq { get; private set; } = 100;
         private uint msFromChargeFlip = 0;
         
-        public Particle(ParticleType charge, Vector2 pos)
+        public Particle(Charge charge, Vector2 pos)
         {
             player = BuzzWorld.Center == pos;
             if (player) position = pos;
@@ -63,7 +63,7 @@ namespace Buzz {
             if (player) {
                 msFromChargeFlip += (uint)time.ElapsedGameTime.Milliseconds;
                 if (Keyboard.GetState().IsKeyDown(Keys.Space) && msFromChargeFlip >= ChargeFlipFreq) {
-                    Charge = (Charge == ParticleType.Positive)  ? ParticleType.Negative : ParticleType.Positive;
+                    Charge = (Charge == Charge.Positive)  ? Charge.Negative : Charge.Positive;
                 }
                 return;
             }
@@ -71,7 +71,10 @@ namespace Buzz {
             float elapsedSeconds = (float)time.ElapsedGameTime.TotalSeconds;
             Position += Speed * elapsedSeconds;
             Speed += Acceleration * elapsedSeconds;
-            Acceleration = Algorithm.CoulombsLaw(BuzzWorld.Center - Position);
+
+            Acceleration = Algorithm.CoulombsLaw(BuzzWorld.PlayerParticle, this);
+            foreach (Particle p in ParticleSpawner.LiveParticles)
+                Acceleration += Algorithm.CoulombsLaw(p, this);
         }
 
         public virtual void Draw(GameTime time, SpriteBatch spriteBatch, bool useBatch = true) {

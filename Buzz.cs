@@ -16,7 +16,7 @@ namespace Buzz
 
         public static Vector2 Center { get; private set;}
 
-        public Particle PlayerParticle;
+        public static Particle PlayerParticle {get; private set;}
 
         public BuzzWorld()
         {
@@ -46,12 +46,13 @@ namespace Buzz
             StaticSprites.ParticlePositive = new Sprite(Content.Load<Texture2D>("particle-positive"));
             StaticSprites.ParticleNegative = new Sprite(Content.Load<Texture2D>("particle-negative"));
             
-            PlayerParticle = new Particle(ParticleType.Neutral, Center);
+            PlayerParticle = new Particle(Charge.Positive, Center);
         }
 
         protected override void Update(GameTime gameTime)
         {
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
+            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed 
+                || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
             PlayerParticle.Update(gameTime);
 
